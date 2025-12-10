@@ -1,5 +1,5 @@
-# Use a valid OpenJDK 17 image
-FROM openjdk:17.0.8-jdk-slim
+# Use Eclipse Temurin 17 JDK (Ubuntu Jammy base)
+FROM eclipse-temurin:17-jdk-jammy
 
 # Set working directory inside container
 WORKDIR /app
@@ -11,7 +11,7 @@ COPY .mvn .mvn
 # Make mvnw executable
 RUN chmod +x mvnw
 
-# Download Maven dependencies
+# Download Maven dependencies (offline)
 RUN ./mvnw dependency:go-offline -B
 
 # Copy the source code
@@ -23,5 +23,5 @@ RUN ./mvnw package -DskipTests
 # Expose the default Spring Boot port
 EXPOSE 8080
 
-# Run the jar file
+# Run the generated jar file
 CMD ["java", "-jar", "target/BankApplicationSystem-0.0.1-SNAPSHOT.jar"]

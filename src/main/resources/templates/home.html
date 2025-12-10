@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Bank Application</title>
+    <style>
+        /* General Styles */
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: #e0f7fa; /* soft light cyan */ 
+            margin: 0; 
+            padding: 0; 
+        }
+
+        header { 
+            background: linear-gradient(90deg, #006064, #26c6da); /* teal gradient */ 
+            color: white; 
+            padding: 20px; 
+            text-align: center; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        h1 { 
+            margin: 0; 
+            font-size: 2.2em; 
+        }
+
+        .container { 
+            width: 85%; 
+            margin: 30px auto; 
+        }
+
+        h2 { 
+            color: #006064; 
+            margin-bottom: 15px; 
+            border-bottom: 2px solid #26c6da;
+            padding-bottom: 5px;
+        }
+
+        /* Form Cards */
+        form { 
+            background: linear-gradient(145deg, #ffffff, #b2ebf2); 
+            padding: 20px; 
+            margin: 15px 0; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15); 
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        form:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+        }
+
+        label { 
+            display: block; 
+            margin-top: 10px; 
+            font-weight: 600; 
+            color: #004d4d;
+        }
+
+        input, button { 
+            padding: 10px; 
+            margin: 5px 0; 
+            width: 100%; 
+            border: 1px solid #0097a7; 
+            border-radius: 8px; 
+            font-size: 1em;
+        }
+
+        input:focus { 
+            border-color: #26c6da; 
+            outline: none; 
+            box-shadow: 0 0 5px rgba(38,198,218,0.5);
+        }
+
+        button { 
+            background: #26c6da; 
+            color: white; 
+            border: none; 
+            cursor: pointer; 
+            font-weight: bold; 
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        button:hover { 
+            background: #00acc1; 
+            transform: translateY(-2px);
+        }
+
+        .message { 
+            margin: 15px 0; 
+            color: #00796b; 
+            font-weight: bold; 
+            font-size: 1.1em;
+        }
+
+        /* Grid Layout */
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 20px; 
+        }
+
+        @media (max-width: 768px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+
+        /* Table Styling */
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 20px; 
+            border-radius: 12px; 
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
+        }
+
+        th, td { 
+            padding: 15px; 
+            text-align: center; 
+        }
+
+        th { 
+            background: linear-gradient(90deg, #004d40, #26c6da); 
+            color: white; 
+        }
+
+        tr:nth-child(even) { background: #e0f2f1; }
+        tr:nth-child(odd) { background: #ffffff; }
+
+        tr:hover { background: #b2ebf2; }
+
+    </style>
+</head>
+<body>
+<header>
+    <h1>🏦 Bank Application System</h1>
+</header>
+
+<div class="container">
+    <p class="message" th:text="${message}"></p>
+
+    <div class="grid">
+        <!-- Create Account -->
+        <form th:action="@{/bank/create}" method="post">
+            <h2>Create Account</h2>
+            <label>Account Holder:</label>
+            <input type="text" name="holder" required>
+            <label>Initial Balance:</label>
+            <input type="number" name="balance" required>
+            <button type="submit">Create</button>
+        </form>
+
+        <!-- Deposit -->
+        <form th:action="@{/bank/deposit}" method="post">
+            <h2>Deposit Money</h2>
+            <label>Account ID:</label>
+            <input type="number" name="id" required>
+            <label>Amount:</label>
+            <input type="number" name="amount" required>
+            <button type="submit">Deposit</button>
+        </form>
+
+        <!-- Withdraw -->
+        <form th:action="@{/bank/withdraw}" method="post">
+            <h2>Withdraw Money</h2>
+            <label>Account ID:</label>
+            <input type="number" name="id" required>
+            <label>Amount:</label>
+            <input type="number" name="amount" required>
+            <button type="submit">Withdraw</button>
+        </form>
+
+        <!-- Check Balance -->
+        <form th:action="@{/bank/balance}" method="post">
+            <h2>Check Balance</h2>
+            <label>Account ID:</label>
+            <input type="number" name="id" required>
+            <button type="submit">Check Balance</button>
+        </form>
+
+        <!-- Transfer -->
+        <form th:action="@{/bank/transfer}" method="post">
+            <h2>Transfer Money</h2>
+            <label>From Account ID:</label>
+            <input type="number" name="fromId" required>
+            <label>To Account ID:</label>
+            <input type="number" name="toId" required>
+            <label>Amount:</label>
+            <input type="number" name="amount" required>
+            <button type="submit">Transfer</button>
+        </form>
+    </div>
+
+    <!-- Accounts Table -->
+    <h2>All Accounts</h2>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Holder</th>
+            <th>Balance</th>
+        </tr>
+        <tr th:each="acc : ${accounts}">
+            <td th:text="${acc.id}"></td>
+            <td th:text="${acc.accountHolder}"></td>
+            <td th:text="${acc.balance}"></td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>
